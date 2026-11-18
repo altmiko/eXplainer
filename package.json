@@ -1,11 +1,11 @@
 {
   "name": "@1miko/explainer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Decision-first mentoring and read-only feature tracing for Oh My Pi.",
   "license": "MIT",
   "keywords": ["omp-package", "omp-plugin", "omp-extension", "oh-my-pi", "mentoring", "coding-agent"],
   "repository": {"type": "git", "url": "git+https://github.com/altmiko/eXplainer.git"},
-  "files": ["src/", "rules/", "README.md", "LICENSE"],
+  "files": ["src/", "skills/", "README.md", "LICENSE"],
   "omp": {"extensions": ["./src/index.ts"]},
   "engines": {"node": ">=20"}
 }
