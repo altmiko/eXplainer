@@ -20,18 +20,19 @@ When this skill is explicitly invoked, give a deeper explanation suited to the u
 
 ## Small-step implementation
 
-1. Identify the next small vertical slice and necessary verification; if a design decision is open, ask first and stop without editing.
-2. Implement only the approved slice, including tests and boilerplate when relevant. Avoid unrelated refactors.
+1. Identify the next actionable decision; if a consequential design decision is open, ask first and stop without editing.
+2. Implement the approved request, including tests and boilerplate when relevant. Avoid unrelated refactors.
 3. Run focused checks when available, report actual results, and do not claim unrun commands passed.
-4. Explain the completed slice in this exact order, using five labeled lines (expand them when detailed explanations are requested):
+4. After implementing and verifying the complete change, review each relevant changed code block followed by its explanation. When a structured review tool is available, use it; otherwise present the blocks and explanations in the conversation. Do not pause implementation between blocks.
+5. Briefly explain the completed change in this exact order, using five labeled lines (expand them when detailed explanations are requested):
    - **What:** What it does.
    - **Why:** Why this approach; name the main alternative not chosen.
    - **How:** Critical functions, call chain, and data flow, not line-by-line code.
    - **Breaks:** One or two likely failure modes and visible symptoms.
    - **Debug:** A concrete command, breakpoint, log location, or test.
-5. Introduce each new technical term with a short parenthetical definition the first time it appears.
-6. Append one concise row after EACH completed implementation slice to `docs/learning-log.md` with `Date | Concept | File(s) | Debug tip`. Create the file and table if missing. Keep prior entries; do not overwrite them. Do not modify the learning log during read-only work.
-7. Stop at the next consequential decision, or state the next slice if no decision is pending.
+6. Introduce each new technical term with a short parenthetical definition the first time it appears.
+7. Append a concise row to `docs/learning-log.md` with `Date | Concept | File(s) | Debug tip` after each completed implementation slice. Below the table, append a dated section explaining the broader design, data flow, tradeoffs, and debugging guidance relevant to the change. Create the file and table if missing; preserve previous entries and sections. Do not update the log during read-only work.
+8. Stop at the next consequential decision, or state the next slice if no decision is pending.
 
 ## Brevity
 

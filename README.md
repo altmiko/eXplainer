@@ -38,7 +38,11 @@ Ask for a change as usual, for example:
 Add a papers table and migration, and ask me about meaningful schema decisions before editing.
 ```
 
-For consequential design choices, the agent presents options and waits for your choice. It then implements the chosen slice, explains what changed and how to debug it, and records a learning note in the project's `docs/learning-log.md`.
+For consequential design choices, the agent presents options and waits for your choice. It then completes and verifies the change before opening a review of the relevant code blocks. Each block is followed by its explanation; mode 1 is concise and mode 2 adds detail.
+
+In the review panel, press Enter or Right for the next block, Left for the previous block, Up or Down to scroll, and Esc to close. Advancing does not make edits: the implementation is already complete. If an interactive panel is unavailable, the agent is instructed to present the blocks in the normal response instead.
+
+The agent also records broader design, data-flow, tradeoff, and debugging notes in the project's `docs/learning-log.md`. The review and notes depend on the agent following the plugin's instructions.
 
 To trace an existing feature without changing the project, enter `/debug-map` followed by the feature name in OMP:
 
@@ -53,7 +57,7 @@ The agent traces the entry point, data flow, state, failure paths, and useful de
 - Applies the shared `skills/explainer/SKILL.md` instructions according to the current mode.
 - Asks 2–4 options only for consequential decisions and waits for the choice before editing that slice.
 - Explains implementation slices as What / Why / How / Breaks / Debug, concisely in mode 1 or in more detail in mode 2.
-- Instructs the agent to append a concise row to `docs/learning-log.md` after completed implementation slices.
+- Instructs the agent to append a learning-log row and broader explanation after completed implementation slices.
 - Adds the read-only-by-instruction `/debug-map <feature>` command.
 
 **Note:** Approval gates and read-only behavior are prompt instructions, not a security sandbox. The extension does not physically block file-write tools. Test it before use on valuable repositories.

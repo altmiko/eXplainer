@@ -2,6 +2,7 @@ import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import { matchesKey, replaceTabs, wrapTextWithAnsi } from "@oh-my-pi/pi-tui";
 
 // Resolve from the installed package, not the user's current project.
 const PACKAGE_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -38,12 +39,85 @@ export default function explainer(pi: ExtensionAPI) {
     },
   });
 
+  const z = pi.zod;
+  pi.registerTool({
+    name: "explainer_review",
+    label: "Code review",
+    description: "Present the completed, verified implementation as ordered code blocks followed by explanations.",
+    loadMode: "essential",
+    approval: "read",
+    parameters: z.object({
+      blocks: z.array(z.object({
+        location: z.string().describe("File path and line range for the implemented code"),
+        code: z.string().describe("Exact code from the finished implementation"),
+        explanation: z.string().describe("Explanation of this code block"),
+      })).min(1).describe("Code blocks in the order the user should review them"),
+    }),
+    async execute(_id, { blocks }, signal, _onUpdate, ctx) {
+      if (mode === 0 || signal?.aborted) {
+        return { content: [{ type: "text", text: "Code review was not opened." }], details: {} };
+      }
+
+      const result = await ctx.ui.custom<"completed" | "closed">((tui, theme, _keys, done) => {
+        let index = 0;
+        let offset = 0;
+        let maxOffset = 0;
+        const finish = (value: "completed" | "closed") => {
+          signal?.removeEventListener("abort", onAbort);
+          done(value);
+        };
+        const onAbort = () => finish("closed");
+        signal?.addEventListener("abort", onAbort, { once: true });
+        return {
+          render(width: number) {
+            const block = blocks[index];
+            const safe = (text: string) => replaceTabs(text.replace(/[\x00-\x08\x0b-\x1f\x7f]/g, ""));
+            const wrap = (text: string) => safe(text).split("\n").flatMap(line => wrapTextWithAnsi(line, Math.max(1, width - 2)));
+            const lines = [...wrap(block.code), "", ...wrap(block.explanation)];
+            const height = Math.max(3, Math.min(18, (process.stdout.rows || 24) - 8));
+            maxOffset = Math.max(0, lines.length - height);
+            offset = Math.min(offset, maxOffset);
+            return [
+              ...wrap(`Block ${index + 1}/${blocks.length} - ${block.location}`).map(line => theme.fg("accent", line)),
+              ...lines.slice(offset, offset + height),
+              ...wrap(`Lines ${offset + 1}-${Math.min(offset + height, lines.length)}/${lines.length} | Enter/right: next | left: previous | up/down: scroll | Esc: close`).map(line => theme.fg("dim", line)),
+            ];
+          },
+          handleInput(data: string) {
+            if (matchesKey(data, "escape")) return finish("closed");
+            if (matchesKey(data, "enter") || matchesKey(data, "right")) {
+              if (index === blocks.length - 1) return finish("completed");
+              index++;
+              offset = 0;
+            } else if (matchesKey(data, "left")) {
+              index = Math.max(0, index - 1);
+              offset = 0;
+            } else if (matchesKey(data, "up")) {
+              offset = Math.max(0, offset - 1);
+            } else if (matchesKey(data, "down")) {
+              offset = Math.min(maxOffset, offset + 1);
+            } else {
+              return;
+            }
+            tui.requestRender();
+          },
+        };
+      });
+
+      const text = result === "completed" ? "The user completed the block review."
+        : result === "closed" ? "The user closed the block review."
+        : "The interactive review was unavailable. Present the code blocks and explanations in the normal response.";
+      return { content: [{ type: "text", text }], details: { result } };
+    },
+  });
+
   pi.on("before_agent_start", (event) => {
     if (mode === 0) return;
     const detail = mode === 2
       ? "\nUse detailed explanations: expand the five sections with examples, tradeoffs, and debugging guidance when relevant."
       : "\nUse base explanations and the concise guidance in this skill.";
-    const block = `<explainer>\n${POLICY}${detail}\n</explainer>`;
+    const review = "\nAfter completing and verifying a coding request, call explainer_review exactly once with every relevant changed code block copied from the final files and an explanation for each, in runtime order. Include file paths and line ranges. Mode 1 explanations are concise; mode 2 explanations include relevant detail and examples. The review happens after all edits, not between them. Do not call it for read-only requests, documentation-only changes, or when no code was changed.";
+    const block = `<explainer>\n${POLICY}${detail}${review}\n</explainer>`;
     if (Array.isArray(event.systemPrompt)) {
       return { systemPrompt: [...event.systemPrompt, block] };
     }
