@@ -7,7 +7,7 @@ An opt-in mentoring mode for [Oh My Pi](https://github.com/can1357/oh-my-pi): th
 After publishing to npm:
 
 ```powershell
-omp plugin install explainer
+omp plugin install @1miko/explainer
 ```
 
 Restart OMP, then ask it to build a small feature. For example: `Add a papers table and migration, and ask me about meaningful schema decisions before editing.`
@@ -36,7 +36,7 @@ Restart OMP and test the sample task and `/debug-map`. If your installed OMP ver
 
 ## Publish to npm
 
-1. Check that the npm package name `explainer` is available.
+1. Check that the npm package name `@1miko/explainer` is available.
 2. Push the repository to GitHub and create an npm account.
 3. From this directory run:
 
@@ -46,7 +46,7 @@ npm login
 npm publish --access public
 ```
 
-4. Verify on another machine: `omp plugin install explainer`.
+4. Verify on another machine: `omp plugin install @1miko/explainer`.
 
 Increment `version` for each npm update (for example `npm version patch`) and publish again.
 
