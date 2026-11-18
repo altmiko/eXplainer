@@ -7,6 +7,7 @@
 | 2026-11-18 | Cycling modes and compact status | `src/index.ts` | Run `/explainer` repeatedly and check the `ex-0`, `ex-1`, and `ex-2` status. |
 | 2026-11-18 | Post-implementation block review | `src/index.ts`, `skills/explainer/SKILL.md` | Check `explainer_review` and its panel when a finished code change is not reviewed. |
 | 2026-11-19 | Reviewing implementations and snippets | `src/index.ts`, `skills/explainer/SKILL.md` | Check whether the request expects file edits or a standalone example before inspecting the review. |
+| 2026-11-19 | Inline review and explanation boxes | `src/index.ts` | Use Alt+N or `/explainer-next` after the agent finishes to display the next block. |
 
 ## 2026-11-18 - Post-implementation block review
 
@@ -17,3 +18,9 @@ The handoff is structured rather than parsed from prose, but the agent still cho
 ## 2026-11-19 - Reviewing implementations and snippets
 
 Implementation requests should produce project file changes, not just a throwaway example. When there is no established language or destination, the agent should ask before making that choice. Explicit requests for an example can be reviewed without file changes: the agent labels the snippet and sends its exact code to the same review tool. These remain instructions, so the agent can still fail to follow them.
+
+## 2026-11-19 - Inline review and explanation boxes
+
+The review tool displays its first block in the conversation and retains later blocks in session memory. Navigation appends the selected block as a visible conversation message, leaving the editor available. Explanations use a theme-colored border to distinguish them from code; turning off the mode or switching sessions discards undisplayed blocks.
+
+If navigation does not work, wait for the agent to finish and try `/explainer-next` to distinguish a shortcut conflict from a missing review. The agent must still call the review tool and supply accurate code.

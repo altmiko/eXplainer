@@ -38,9 +38,9 @@ Ask for a change as usual, for example:
 Add a papers table and migration, and ask me about meaningful schema decisions before editing.
 ```
 
-For consequential design choices, the agent presents options and waits for your choice. It then completes and verifies the change before opening a review of the relevant code blocks. Each block is followed by its explanation; mode 1 is concise and mode 2 adds detail.
+For consequential design choices, the agent presents options and waits for your choice. It then completes and verifies the change before presenting the relevant code blocks inline. Each block is followed by an explanation in a distinct box; mode 1 is concise and mode 2 adds detail.
 
-In the review panel, press Enter or Right for the next block, Left for the previous block, Up or Down to scroll, and Esc to close. Advancing does not make edits: the implementation is already complete. If an interactive panel is unavailable, the agent is instructed to present the blocks in the normal response instead.
+Once the agent finishes, press Alt+N for the next block or Alt+Shift+N for the previous one. If a shortcut conflicts with your keybindings, use `/explainer-next` or `/explainer-previous`. Advancing only displays code; it does not make edits. Previously displayed blocks remain in the conversation. Undisplayed blocks are kept in memory for the current session and are cleared when switching sessions or selecting mode 0.
 
 The agent also records broader design, data-flow, tradeoff, and debugging notes in the project's `docs/learning-log.md`. The review and notes depend on the agent following the plugin's instructions.
 
