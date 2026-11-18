@@ -43,13 +43,13 @@ export default function explainer(pi: ExtensionAPI) {
   pi.registerTool({
     name: "explainer_review",
     label: "Code review",
-    description: "Present the completed, verified implementation as ordered code blocks followed by explanations.",
+    description: "Present implemented or explicitly requested example code as ordered blocks followed by explanations.",
     loadMode: "essential",
     approval: "read",
     parameters: z.object({
       blocks: z.array(z.object({
-        location: z.string().describe("File path and line range for the implemented code"),
-        code: z.string().describe("Exact code from the finished implementation"),
+        location: z.string().describe("File path and line range, or a label for an example snippet"),
+        code: z.string().describe("Exact code from the finished implementation or requested example"),
         explanation: z.string().describe("Explanation of this code block"),
       })).min(1).describe("Code blocks in the order the user should review them"),
     }),
@@ -116,7 +116,7 @@ export default function explainer(pi: ExtensionAPI) {
     const detail = mode === 2
       ? "\nUse detailed explanations: expand the five sections with examples, tradeoffs, and debugging guidance when relevant."
       : "\nUse base explanations and the concise guidance in this skill.";
-    const review = "\nAfter completing and verifying a coding request, call explainer_review exactly once with every relevant changed code block copied from the final files and an explanation for each, in runtime order. Include file paths and line ranges. Mode 1 explanations are concise; mode 2 explanations include relevant detail and examples. The review happens after all edits, not between them. Do not call it for read-only requests, documentation-only changes, or when no code was changed.";
+    const review = "\nAfter completing and verifying a coding request, call explainer_review exactly once with every relevant changed code block copied from the final files and an explanation for each, in runtime order. Include file paths and line ranges. If the user asks for code as an answer without file changes, review the exact example code instead and label it as a snippet. Mode 1 explanations are concise; mode 2 explanations include relevant detail and examples. The review happens after all edits, not between them. Do not call it when asking for missing information or for requests without code.";
     const block = `<explainer>\n${POLICY}${detail}${review}\n</explainer>`;
     if (Array.isArray(event.systemPrompt)) {
       return { systemPrompt: [...event.systemPrompt, block] };

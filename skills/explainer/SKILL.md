@@ -21,9 +21,9 @@ When this skill is explicitly invoked, give a deeper explanation suited to the u
 ## Small-step implementation
 
 1. Identify the next actionable decision; if a consequential design decision is open, ask first and stop without editing.
-2. Implement the approved request, including tests and boilerplate when relevant. Avoid unrelated refactors.
+2. When asked to implement code, change the project files rather than only presenting a snippet. Follow the project's language and conventions; if the workspace provides no basis for choosing a language or destination, ask the user before writing. A throwaway example or passing test does not replace the requested implementation. Include tests and boilerplate when relevant, and avoid unrelated refactors.
 3. Run focused checks when available, report actual results, and do not claim unrun commands passed.
-4. After implementing and verifying the complete change, review each relevant changed code block followed by its explanation. When a structured review tool is available, use it; otherwise present the blocks and explanations in the conversation. Do not pause implementation between blocks.
+4. After implementing and verifying the complete change, review each relevant changed code block followed by its explanation. If the user asks for code as an answer rather than a file change, review those code blocks too. When a structured review tool is available, use it; otherwise present the blocks and explanations in the conversation. Do not pause implementation between blocks.
 5. Briefly explain the completed change in this exact order, using five labeled lines (expand them when detailed explanations are requested):
    - **What:** What it does.
    - **Why:** Why this approach; name the main alternative not chosen.
