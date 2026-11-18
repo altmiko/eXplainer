@@ -1,4 +1,4 @@
-# eXplainer — Oh My Pi extension
+# eXplainer - Oh My Pi extension
 
 An opt-in mentoring mode for [Oh My Pi](https://github.com/can1357/oh-my-pi): the agent asks about meaningful design choices, writes the implementation, explains the important code, records learning notes, and offers a read-only `/debug-map` command.
 
